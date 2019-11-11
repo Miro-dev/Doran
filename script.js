@@ -1,6 +1,15 @@
 let map = [];
-let currentPosition = { row: 0, col: 0, Player: true, Monster: false, Item: false, Obsticle: false }
+let currentPosition = { row: 2, col: 2, Player: true, Monster: false, Item: false, Obsticle: false }
 let previousPosition = { row: 0, col: 0, Player: false, Monster: false, Item: false, Obsticle: false }
+let currPosIdx = 0;
+let prevPosIdx = 0;
+let currTileIdx
+let wallIndicator = 0;
+
+// Cloning function for Objects
+function clone(src) {
+    return Object.assign({}, src);
+}
 
 for (let rowCount = 0; rowCount < 10; rowCount++) {
     $("#map").append(`<div class="row" id="row${rowCount}"></div>`);
@@ -11,38 +20,85 @@ for (let rowCount = 0; rowCount < 10; rowCount++) {
 }
 
 $(document).keydown(function (e) {
-    $(`#col${previousPosition.col}row${previousPosition.row}`).css('background-color', 'green')
+
+    // Change Color of previous Tile
+    $(`#col${previousPosition.col}row${previousPosition.row}`).css('background-color', 'rgb(136, 199, 144)')
+    $(`#col${currentPosition.col}row${currentPosition.row}`).css('background-color', 'rgb(136, 199, 144)')
+
+    // Iherit index and position
+    prevPosIdx = currPosIdx;
+    previousPosition = clone(currentPosition);
+
+    // Change coordinates of Player
     move(e.which);
-    let currentTileIdx = map.findIndex((tile) => {
-        return tile.row === currentPosition.row && tile.col === currentPosition.col
-    })
-    map[currentTileIdx].Player = true;
-    currentPosition = map[currentTileIdx];
-    console.log(currentPosition);
-    previousPosition = currentPosition;
+
+    // Get current Index
+    function findTile(tile) {
+        return tile.row == currentPosition.row && tile.col == currentPosition.col;
+    }
+
+    currTileIdx = map.findIndex(findTile);
+
+    currPosIdx = currTileIdx;
+
+    // Player on/off tile
+    map[currPosIdx].Player = true;
+    currentPosition = clone(map[currPosIdx]);
+    map[prevPosIdx].Player = false;
+    previousPosition = clone(map[prevPosIdx]);
+
+    currentPosition.Monster = true;
+
+    // Change Color of current Tile
     $(`#col${currentPosition.col}row${currentPosition.row}`).css('background-color', 'blue');
+
+    if (wallIndicator === 1) {
+        $(`#col${currentPosition.col}row${currentPosition.row}`).css('background-color', 'red');
+        wallIndicator = 0;
+    }
 });
 
+const populateObsitcles = function (array) {
+
+}
+
 const move = function (key) {
-    previousPosition = currentPosition;
+    console.log("Row: " + currentPosition.row)
+    console.log("Col: " + currentPosition.col)
     switch (key) {
         case 38:
-            currentPosition.row--
+            if (currentPosition.row === 0) {
+                wallIndicator = 1;
+            } else {
+                currentPosition.row--
+            }
             // Up
             break;
 
         case 40:
-            currentPosition.row++
+            if (currentPosition.row === 9) {
+                wallIndicator = 1;
+            } else {
+                currentPosition.row++
+            }
             // Down
             break;
 
         case 39:
-            currentPosition.col++
+            if (currentPosition.col === 9) {
+                wallIndicator = 1;
+            } else {
+                currentPosition.col++
+            }
             // Right
             break;
 
         case 37:
-            currentPosition.col--
+            if (currentPosition.col === 0) {
+                wallIndicator = 1;
+            } else {
+                currentPosition.col--
+            }
             // Left
             break;
 

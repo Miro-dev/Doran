@@ -9,7 +9,7 @@ body {
 }
 
 .col{
-    background-color: brown;
+    background-color: rgb(136, 199, 144);
     margin: 2px;
     height: 60px;
 }
@@ -19,9 +19,9 @@ body {
     transition: background-color 0.3s;
 }
 
-.container {
+/* .container {
     background-color: blueviolet;
-}
+} */
 
 .displayBox {
     width: 100%;
